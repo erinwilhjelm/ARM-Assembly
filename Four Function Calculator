@@ -22,6 +22,8 @@ newLine: .asciz "\n"
 
 main:
 
+
+//obtains users input
 ldr x0,=type
 ldr x1, =firstInput
 ldr x2, =secondInput
@@ -29,36 +31,38 @@ ldr x3, =inputOperator
 bl scanf
 
 
-
+//stores integers
 ldr x9, =firstInput
 ldr x21, [x9]
 ldr x9, =secondInput
 ldr x22, [x9]
 
-
+//stores operator
 ldr x20, =inputOperator
 ldrb w20, [x20, #0]
 
-
+//branch to error
 sub w19, w20, #41
 cbz w19, error
 
-
+//branch if +
 sub w19,w20, #43
 cbz w19, add
 
-
+//branch if -
 sub w19,w20, #45
 cbz w19, sub
 
-
+//branch if *
 sub w19, w20, #42
 cbz w19, multi
 
-
+//branch if /
 sub w19, w20, #47
 cbz w19, div
 
+
+//add function
 add:
 ADD x23,x21, x22
 ldr x0,=answer
@@ -68,6 +72,7 @@ ldr x0,=newLine
 bl printf
 b exit
 
+//subtract function
 sub:
 SUB x23,x21,x22
 ldr x0,=answer
@@ -77,6 +82,7 @@ ldr x0,=newLine
 bl printf
 b exit
 
+//multiply function
 multi:
 MUL x23,x21,x22
 ldr x0,=answer
@@ -86,6 +92,7 @@ ldr x0,=newLine
 bl printf
 b exit
 
+//divide function
 div:
 cbz w22, div_error
 SDIV w23,w21,w22
@@ -95,7 +102,6 @@ bl printf
 ldr x0,=newLine
 bl printf
 b exit
-
 
 div_error:
 ldr x0, =error_prompt
