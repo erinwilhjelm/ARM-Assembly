@@ -1,0 +1,88 @@
+//
+//  Created by Erin wilhjelm on 3/16/19.
+//
+.data
+
+prompt: .asciz "Enter a string"
+string: .asciz "%[^\n]"
+line: .asciz "\n"
+printx: .asciz "x"
+buffer: .space 256
+outputBuffer: .space 8
+
+.global main
+.text
+
+main:
+
+// prompt input
+ldr x0, =prompt
+bl printf
+
+//user input
+ldr x0, =string
+ldr x1, =buffer
+bl scanf
+
+//store buffer into register
+ldr x21, =buffer
+
+//set iterator at 0
+mov x22, #0
+
+//call loop function
+bl loop
+
+//flush buffer
+ldr x0, =line
+bl printf
+
+//exit code
+b exit
+
+loop:
+ldrb w2,[x21,x22]
+mov w23, w2
+cbz w23, exit
+add x22,x22,#1
+
+CMP w23, #'a'
+BEQ replaceVowel
+CMP w23, #'e'
+BEQ replaceVowel
+CMP w23, #'i'
+BEQ replaceVowel
+CMP w23, #'o'
+BEQ replaceVowel
+CMP w23, #'u'
+BEQ replaceVowel
+CMP w23, #'A'
+BEQ replaceVowel
+CMP w23, #'E'
+BEQ replaceVowel
+CMP w23, #'I'
+BEQ replaceVowel
+CMP w23, #'O'
+BEQ replaceVowel
+CMP w23, #'U
+BEQ replaceVowel
+
+//non vowel output
+ldr x25, =outputBuffer
+stur x23, [x25,#0]
+ldr x0, =outputBuffer
+bl printf
+
+b loop
+
+replaceVowel:
+ldr x0, =printx
+bl printf
+b loop
+
+exit:
+ldr x0, =line
+bl printf
+mov x0, #0
+mov x8, #93
+svc #0
