@@ -1,0 +1,117 @@
+//erin Wilhjelm
+
+.section .data
+
+prompt: .asciz "Enter two integers and an operator"
+output: .asciz "Output: "
+error_prompt: .asciz "You did not enter a correct number or operator"
+div_prompt: .asciz "Division by zero is not allowed"
+
+
+firstInput: .SPACE 8
+secondInput: .SPACE 8
+inputOperator: .SPACE 1
+outputAns: .SPACE 8
+type: .asciz "%d %d %c"
+answer: .asciz "%d"
+charType: .asciz "%c"
+newLine: .asciz "\n"
+
+.global main
+.section .text
+
+main:
+
+ldr x0,=type
+ldr x1, =firstInput
+ldr x2, =secondInput
+ldr x3, =inputOperator
+bl scanf
+
+
+
+ldr x9, =firstInput
+ldr x21, [x9]
+ldr x9, =secondInput
+ldr x22, [x9]
+
+
+ldr x20, =inputOperator
+ldrb w20, [x20, #0]
+
+
+sub w19, w20, #41
+cbz w19, error
+
+
+sub w19,w20, #43
+cbz w19, add
+
+
+sub w19,w20, #45
+cbz w19, sub
+
+
+sub w19, w20, #42
+cbz w19, multi
+
+
+sub w19, w20, #47
+cbz w19, div
+
+add:
+ADD x23,x21, x22
+ldr x0,=answer
+mov x1, x23
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+sub:
+SUB x23,x21,x22
+ldr x0,=answer
+mov x1, x23
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+multi:
+MUL x23,x21,x22
+ldr x0,=answer
+mov x1, x23
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+div:
+cbz w22, div_error
+SDIV w23,w21,w22
+ldr x0,=answer
+mov x1, x23
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+
+div_error:
+ldr x0, =error_prompt
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+error:
+ldr x0, =error_prompt
+bl printf
+ldr x0,=newLine
+bl printf
+b exit
+
+exit:
+mov x0, #0
+mov x8, #93
+svc #0
